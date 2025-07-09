@@ -4,17 +4,21 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
+import sys
 from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import List
 import uuid
 from datetime import datetime
 
-# Import menu routes
-from routes.menu import router as menu_router
-
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
+
+# Add current directory to Python path
+sys.path.insert(0, str(ROOT_DIR))
+
+# Import menu routes
+from routes.menu import router as menu_router
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
