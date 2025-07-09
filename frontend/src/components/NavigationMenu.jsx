@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { categories } from '../data/mockData';
 
-const NavigationMenu = () => {
-  const [activeSection, setActiveSection] = useState('apericena');
+const NavigationMenu = ({ categories = [] }) => {
+  const [activeSection, setActiveSection] = useState(categories[0]?.id || '');
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -35,7 +34,14 @@ const NavigationMenu = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [categories]);
+
+  // Update active section when categories change
+  useEffect(() => {
+    if (categories.length > 0 && !activeSection) {
+      setActiveSection(categories[0].id);
+    }
+  }, [categories, activeSection]);
 
   return (
     <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-amber-200">

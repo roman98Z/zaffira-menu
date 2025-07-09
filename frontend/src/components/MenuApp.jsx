@@ -2,20 +2,36 @@ import React from 'react';
 import MenuHeader from './MenuHeader';
 import NavigationMenu from './NavigationMenu';
 import MenuSection from './MenuSection';
-import { menuData } from '../data/mockData';
+import LoadingSpinner from './LoadingSpinner';
+import ErrorMessage from './ErrorMessage';
+import { useMenu } from '../hooks/useMenu';
 
 const MenuApp = () => {
+  const { menuData, loading, error, refreshMenu } = useMenu();
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return <ErrorMessage message={error} onRetry={refreshMenu} />;
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <MenuHeader />
-      <NavigationMenu />
+      <NavigationMenu categories={menuData} />
       
       <main>
-        <MenuSection category="apericena" items={menuData.apericena} />
-        <MenuSection category="bevande" items={menuData.bevande} />
-        <MenuSection category="vini" items={menuData.vini} />
-        <MenuSection category="mixology" items={menuData.mixology} />
-        <MenuSection category="gin" items={menuData.gin} />
+        {menuData.map((category) => (
+          <MenuSection 
+            key={category.id}
+            category={category.id}
+            title={category.label}
+            icon={category.icon}
+            items={category.items}
+          />
+        ))}
       </main>
       
       <footer className="bg-amber-900 text-amber-100 py-8 mt-16">
