@@ -1,245 +1,124 @@
+guided-wiring/
+├── index.html
+├── style.css
+└── script.js
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zaffira - Aperitivo e Mixology</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont,
-'Segoe UI'
-,
-Roboto, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2
-100%); min-height: 100vh; }
-.header { background: rgba(255, 255, 255, 0.95); backdrop-filter:
-blur(20px); padding: 2rem 1rem; text-align: center; box-shadow: 0 8px 32px
-rgba(0, 0, 0, 0.1); position: sticky; top: 0; z-index: 100; }
-.header h1 { font-size: 3rem; font-weight: 700; background: linear-
-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -
-webkit-text-fill-color: transparent; margin-bottom: 0.5rem; }
-.header p { color: #666; font-size: 1.2rem; font-weight: 300; }
-.container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
-.menu-section { background: rgba(255, 255, 255, 0.9); backdrop-filter:
-blur(20px); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; box-
-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); }
-.menu-section h2 { font-size: 2rem; font-weight: 600; margin-bottom:
-1.5rem; color: #333; border-bottom: 3px solid #667eea; padding-bottom: 0.5rem;
-}
-.menu-item { display: flex; justify-content: space-between; align-
-items: flex-start; padding: 1rem 0; border-bottom: 1px solid #eee; }
-.menu-item:last-child { border-bottom: none; }
-.item-info h3 { font-size: 1.2rem; font-weight: 600; color: #333;
-margin-bottom: 0.5rem; }
-.item-description { color: #666; font-size: 0.9rem; line-height: 1.4; }
-.item-price { font-size: 1.2rem; font-weight: 600; color: #667eea;
-white-space: nowrap; margin-left: 1rem; }
-.footer { background: rgba(51, 51, 51, 0.95); backdrop-filter:
-blur(20px); color: white; padding: 2rem 1rem; text-align: center; margin-top:
-3rem; }
-.footer h3 { font-size: 1.5rem; margin-bottom: 1rem; }
-.social-links { display: flex; justify-content: center; gap: 2rem;
-margin: 1.5rem 0; }
-.social-link { display: flex; align-items: center; gap: 0.5rem; color:
-white; text-decoration: none; padding: 0.8rem 1.5rem; border-radius: 50px;
-transition: all 0.3s ease; }
-.instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c
-25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
-.phone { background: linear-gradient(45deg, #00c851 0%, #007e33 100%);
-}
-.social-link:hover { transform: scale(1.05); box-shadow: 0 10px 20px
-rgba(0, 0, 0, 0.2); }
-@media (max-width: 768px) { .header h1 { font-size: 2rem; } .menu-item
-{ flex-direction: column; align-items: flex-start; } .item-price { margin-left:
-0; margin-top: 0.5rem; } .social-links { flex-direction: column; align-items:
-center; } }
-</style>
+  <meta charset="UTF-8">
+  <title>Guida Cablaggio</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="header">
-<h1>Zaffira</h1>
-<p>Aperitivo e Mixology</p>
-</header>
-<div class="container">
-<section class="menu-section">
-<h2>🍽 Apericena</h2>
-<div class="menu-item">
-<div class="item-info">
-<h3>Bruschette Miste</h3>
-<p class="item-description">Pane casereccio con pomodoro,
-olive e paté</p>
-</div>
-<span class="item-price">€6,00</span>
-</div>
-<div class="menu-item">
-<div class="item-info">
-<h3>Tagliere Classico Grande</h3>
-<p class="item-description">Prosciutto crudo, Mortadella,
-Capocollo, Salame, Salsiccia Secca, Bruschette, Pecorino, Formaggio Stagionato,
-Mozzarella</p>
-</div>
-<span class="item-price">€16,00</span>
-</div>
-<div class="menu-item">
-<div class="item-info">
-<h3>Tagliere Vegetariano Grande</h3>
-<p class="item-description">Bruschette, Fagioli, Melanzane
-Grigliate, Peperoni Grigliati, Zucchine Grigliate, Pecorino, Formaggio
-Stagionato, Mozzarella, Pinzimonio con Salsa allo Yogurt</p>
-</div>
-<span class="item-price">€15,00</span>
-</div>
-</section>
-<section class="menu-section">
-<h2>🥤 Bevande</h2>
-<div class="menu-item">
-<div class="item-info">
-<h3>Acqua Naturale</h3>
-<p class="item-description">Bottiglia 50cl</p>
-</div>
-<span class="item-price">€2,00</span>
-</div>
-<div class="menu-item">
-<div class="item-info">
-<h3>Acqua Frizzante</h3>
-<p class="item-description">Bottiglia 50cl</p>
-</div>
-<span class="item-price">€2,00</span>
-</div>
-<div class="menu-item">
-<div class="item-info">
-<h3>Coca Cola</h3>
-<p class="item-description">Lattina 33cl</p>
-</div>
-<span class="item-price">€3,00</span>
-</div>
-<div class="menu-item">
-<div class="item-info">
-<h3>Succo di Frutta</h3>
-<p class="item-description">Arancia, Pesca, Pera</p>
-</div>
-<span class="item-price">€3,50</span>
-</div>
-</section>
-<section class="menu-section">
-<h2>🍷 Vini e Bollicine</h2>
-<div class="menu-item">
-<div class="item-info">
-<h3>Prosecco DOC</h3>
-<p class="item-description">Bottiglia - Veneto</p>
-</div>
-<span class="item-price">€18,00</span>
-</div>
-<div class="menu-item">
-<div class="item-info">
-<h3>Franciacorta DOCG</h3>
-<p class="item-description">Bottiglia - Lombardia</p>
-</div>
-<span class="item-price">€35,00</span>
-</div>
-<div class="menu-item">
-<div class="item-info">
-<h3>Chianti Classico DOCG</h3>
-<p class="item-description">Bottiglia - Toscana</p>
-</div>
-<span class="item-price">€25,00</span>
-</div>
-<div class="menu-item">
-<div class="item-info">
-<h3>Pinot Grigio DOC</h3>
-<p class="item-description">Bottiglia - Alto Adige</p>
-</div>
-<span class="item-price">€22,00</span>
-</div>
-</section>
-<section class="menu-section">
-<h2>🍸 Mixology</h2>
-<div class="menu-item">
-<div class="item-info">
-<h3>NEGRONI RIVISITATO</h3>
-<p class="item-description">Gin speziato, bitter alla
-liquirizia, vermouth rosso</p>
-</div>
-<span class="item-price">€8,00</span>
-</div>
-<div class="menu-item">
-<div class="item-info">
-<h3>SPRITZ APEROL</h3>
-<p class="item-description">Classico spritz con prosecco,
-Aperol e soda</p>
-</div>
-<span class="item-price">€6,00</span>
-</div>
-<div class="menu-item">
-<div class="item-info">
-<h3>MOSCOW MULE</h3>
-<p class="item-description">Vodka premium, ginger beer,
-lime fresco</p>
-</div>
-<span class="item-price">€7,50</span>
-</div>
-<div class="menu-item">
-<div class="item-info">
-<h3>GIN TONIC SIGNATURE</h3>
-<p class="item-description">Gin premium, tonica
-artigianale, botaniche fresche</p>
-</div>
-<span class="item-price">€9,00</span>
-</div>
-</section>
-<section class="menu-section">
-<h2>🍾 I Nostri Gin</h2>
-<div class="menu-item">
-<div class="item-info">
-<h3>Monkey 47</h3>
-<p class="item-description">Germania - 47% - 47
-botaniche</p>
-</div>
-<span class="item-price">€12,00</span>
-</div>
-<div class="menu-item">
-<div class="item-info">
-<h3>Hendrick's</h3>
-<p class="item-description">Scozia - 41.4% - Cetriolo e
-rosa</p>
-</div>
-<span class="item-price">€10,00</span>
-</div>
-<div class="menu-item">
-<div class="item-info">
-<h3>Bombay Sapphire</h3>
-<p class="item-description">Inghilterra - 40% - 10
-botaniche</p>
-</div>
-<span class="item-price">€8,00</span>
-</div>
-<div class="menu-item">
-<div class="item-info">
-<h3>Gin Mare</h3>
-<p class="item-description">Spagna - 42.7% -
-Mediterraneo</p>
-</div>
-<span class="item-price">€10,00</span>
-</div>
-</section>
-</div>
-<footer class="footer">
-<h3>Zaffira</h3>
-<p>Aperitivo e Mixology</p>
-<div class="social-links">
-<a href="https://www.instagram.com/zadorozhnyy98?
-igsh=cjRudXdjOXY3eWsw" target="
-_
-blank" class="social-link instagram">
-<span>📸</span>
-<span>Seguici su Instagram</span>
-</a>
-<a href="tel:+393203089094" class="social-link phone">
-<span>📞</span>
-<span>+39 320 3089094</span>
-</a>
-</div>
-<p style="margin-top: 1rem; color: #ccc; font-size: 0.9rem;">© 2025
-Zaffira. Tutti i diritti riservati.</p>
-</footer>
+  <div class="container">
+    <h1>Guida Cablaggio - Passo Passo</h1>
+    <div class="wiring-layout" id="wiringLayout"></div>
+    <div class="info-panel">
+      <p>Pin attuale: <span id="currentPin">--</span></p>
+      <p>Colore filo: <span id="currentColor">--</span></p>
+      <button id="nextBtn">Avanti</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
+body {
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  padding: 30px;
+}
+
+.container {
+  max-width: 600px;
+  text-align: center;
+}
+
+.wiring-layout {
+  display: grid;
+  grid-template-columns: repeat(5, 60px);
+  gap: 10px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.pin {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  border: 2px solid #555;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+  background-color: #222;
+  color: #ccc;
+  transition: all 0.3s ease;
+}
+
+.pin.active {
+  background-color: yellow;
+  color: black;
+  border-color: orange;
+}
+
+.info-panel {
+  margin-top: 20px;
+}
+
+#nextBtn {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+const wiringSteps = [
+  { pin: 1, color: 'Rosso' },
+  { pin: 2, color: 'Blu' },
+  { pin: 3, color: 'Verde' },
+  { pin: 4, color: 'Giallo' },
+  { pin: 5, color: 'Bianco' },
+  { pin: 6, color: 'Nero' }
+];
+
+let currentStep = 0;
+
+const wiringLayout = document.getElementById("wiringLayout");
+const currentPinText = document.getElementById("currentPin");
+const currentColorText = document.getElementById("currentColor");
+const nextBtn = document.getElementById("nextBtn");
+
+function renderPins() {
+  wiringLayout.innerHTML = '';
+  for (let i = 1; i <= 25; i++) {
+    const pinDiv = document.createElement('div');
+    pinDiv.className = 'pin';
+    pinDiv.textContent = i;
+    if (wiringSteps[currentStep] && i === wiringSteps[currentStep].pin) {
+      pinDiv.classList.add('active');
+    }
+    wiringLayout.appendChild(pinDiv);
+  }
+}
+
+function updateInfo() {
+  if (currentStep >= wiringSteps.length) {
+    currentPinText.textContent = "Fine";
+    currentColorText.textContent = "-";
+    nextBtn.disabled = true;
+    return;
+  }
+  currentPinText.textContent = wiringSteps[currentStep].pin;
+  currentColorText.textContent = wiringSteps[currentStep].color;
+}
+
+nextBtn.addEventListener('click', () => {
+  currentStep++;
+  renderPins();
+  updateInfo();
+});
+
+renderPins();
+updateInfo();
