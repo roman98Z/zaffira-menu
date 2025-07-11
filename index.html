@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>People_terni - Aperitivo e Mixology</title>
+    <title>People Terni - Aperitivo e Mixology</title>
     <style>
         * {
             margin: 0;
@@ -258,6 +258,21 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
+        .gelato-image {
+            width: 150px;
+            height: 200px;
+            border-radius: 15px;
+            margin: 0 auto 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+        }
+        
         .product-detail h3 {
             font-size: 2rem;
             font-weight: 700;
@@ -390,7 +405,7 @@
         <!-- Homepage -->
         <div id="homepage" class="page-content active">
             <div class="header">
-                <h1>Zaffira</h1>
+                <h1>People Terni</h1>
                 <p>Scopri le nostre proposte per un aperitivo indimenticabile</p>
             </div>
             
@@ -446,6 +461,17 @@
                     <div class="category-content">
                         <h3 class="category-title">🍾 I Nostri Gin</h3>
                         <p class="category-description">Collezione esclusiva di gin premium e artigianali</p>
+                        <button class="explore-button">Esplora il Menu</button>
+                    </div>
+                </div>
+                
+                <div class="category-card" onclick="showCategory('gelati')">
+                    <div class="category-image">
+                        <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Gelati" loading="lazy">
+                    </div>
+                    <div class="category-content">
+                        <h3 class="category-title">🍦 Gelati</h3>
+                        <p class="category-description">Selezione di gelati artigianali e specialità dolci</p>
                         <button class="explore-button">Esplora il Menu</button>
                     </div>
                 </div>
@@ -677,7 +703,7 @@
                 </div>
                 
                 <div class="product-card">
-                    <div class="product-name">Zaffira Signature</div>
+                    <div class="product-name">People Signature</div>
                     <div class="product-description">Cocktail della casa con gin artigianale</div>
                     <div class="product-price">€10,00</div>
                 </div>
@@ -726,6 +752,51 @@
                     <div class="product-name">Malfy Gin</div>
                     <div class="product-description">Gin italiano con limoni della Costiera</div>
                     <div class="product-price">€8,00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gelati Page -->
+        <div id="gelati" class="page-content">
+            <div class="category-header">
+                <h2>🍦 Gelati</h2>
+                <p>Selezione di gelati artigianali e specialità dolci</p>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card" onclick="showProduct('cucciolone')">
+                    <div class="gelato-image">🍦</div>
+                    <div class="product-name">Cucciolone</div>
+                    <div class="product-description">Gelato artigianale cremoso e goloso</div>
+                    <div class="product-price">€3,50</div>
+                </div>
+                
+                <div class="product-card" onclick="showProduct('whitechocolate')">
+                    <div class="gelato-image">🤍</div>
+                    <div class="product-name">White Chocolate</div>
+                    <div class="product-description">Gelato al cioccolato bianco premium</div>
+                    <div class="product-price">€4,00</div>
+                </div>
+                
+                <div class="product-card" onclick="showProduct('cordarica')">
+                    <div class="gelato-image">🍫</div>
+                    <div class="product-name">Corda Rica</div>
+                    <div class="product-description">Gelato ricco e intenso</div>
+                    <div class="product-price">€3,80</div>
+                </div>
+                
+                <div class="product-card" onclick="showProduct('magnum')">
+                    <div class="gelato-image">🍦</div>
+                    <div class="product-name">Magnum®</div>
+                    <div class="product-description">Il classico gelato con cioccolato</div>
+                    <div class="product-price">€4,50</div>
+                </div>
+                
+                <div class="product-card" onclick="showProduct('bomboniera')">
+                    <div class="gelato-image">🎁</div>
+                    <div class="product-name">Bomboniera Classic</div>
+                    <div class="product-description">Gelato elegante e raffinato</div>
+                    <div class="product-price">€4,20</div>
                 </div>
             </div>
         </div>
@@ -881,13 +952,119 @@
             <p>Gin italiano che cattura l'essenza del Mediterraneo con limoni della Costiera Amalfitana. Fresco e solare come l'estate italiana.</p>
         </div>
 
+        <!-- Gelati Product Details -->
+        <div id="cucciolone" class="product-detail">
+            <div class="gelato-image">🍦</div>
+            <h3>Cucciolone</h3>
+            <div class="product-price">€3,50</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Tipo:</span>
+                    <span class="spec-value">Gelato artigianale</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Formato:</span>
+                    <span class="spec-value">Cono/Coppetta</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Caratteristiche:</span>
+                    <span class="spec-value">Cremoso e goloso</span>
+                </div>
+            </div>
+            <p>Il Cucciolone è un gelato artigianale dalla consistenza cremosa e dal sapore intenso. Perfetto per chi cerca un momento di dolcezza autentica.</p>
+        </div>
+
+        <div id="whitechocolate" class="product-detail">
+            <div class="gelato-image">🤍</div>
+            <h3>White Chocolate</h3>
+            <div class="product-price">€4,00</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Tipo:</span>
+                    <span class="spec-value">Gelato al cioccolato bianco</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Formato:</span>
+                    <span class="spec-value">Premium</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Caratteristiche:</span>
+                    <span class="spec-value">Delicato e raffinato</span>
+                </div>
+            </div>
+            <p>Gelato premium al cioccolato bianco di alta qualità. Il sapore delicato e la consistenza vellutata lo rendono una scelta elegante per i palati raffinati.</p>
+        </div>
+
+        <div id="cordarica" class="product-detail">
+            <div class="gelato-image">🍫</div>
+            <h3>Corda Rica</h3>
+            <div class="product-price">€3,80</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Tipo:</span>
+                    <span class="spec-value">Gelato ricco</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Formato:</span>
+                    <span class="spec-value">Specialità</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Caratteristiche:</span>
+                    <span class="spec-value">Intenso e corposo</span>
+                </div>
+            </div>
+            <p>Corda Rica è un gelato dal sapore intenso e dalla consistenza ricca. Una specialità che soddisfa chi cerca un'esperienza gustativa piena e appagante.</p>
+        </div>
+
+        <div id="magnum" class="product-detail">
+            <div class="gelato-image">🍦</div>
+            <h3>Magnum®</h3>
+            <div class="product-price">€4,50</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Tipo:</span>
+                    <span class="spec-value">Gelato con cioccolato</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Formato:</span>
+                    <span class="spec-value">Stecco premium</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Caratteristiche:</span>
+                    <span class="spec-value">Classico e iconico</span>
+                </div>
+            </div>
+            <p>Il classico Magnum® con la sua inconfondibile copertura di cioccolato e il gelato cremoso all'interno. Un'icona del piacere che non passa mai di moda.</p>
+        </div>
+
+        <div id="bomboniera" class="product-detail">
+            <div class="gelato-image">🎁</div>
+            <h3>Bomboniera Classic</h3>
+            <div class="product-price">€4,20</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Tipo:</span>
+                    <span class="spec-label">Gelato elegante</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Formato:</span>
+                    <span class="spec-value">Classic</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Caratteristiche:</span>
+                    <span class="spec-value">Raffinato e prezioso</span>
+                </div>
+            </div>
+            <p>Bomboniera Classic è un gelato elegante e raffinato, perfetto per chi cerca una dolcezza preziosa. Come un piccolo regalo per il palato.</p>
+        </div>
+
         <!-- Footer -->
         <div class="footer">
-            <h3>Zaffira</h3>
+            <h3>People Terni</h3>
             <p>Aperitivo e Mixology</p>
             
             <div class="social-links">
-                <a href="https://instagram.com/zaffira_aperitivo" class="social-link instagram">
+                <a href="https://instagram.com/people_terni" class="social-link instagram">
                     📷 @people_terni
                 </a>
                 <a href="tel:+393123456789" class="social-link phone">
@@ -896,7 +1073,7 @@
             </div>
             
             <div class="copyright">
-                © 2024 Zaffira - Aperitivo e Mixology. Tutti i diritti riservati.
+                © 2024 People Terni - Aperitivo e Mixology. Tutti i diritti riservati.
             </div>
         </div>
     </div>
