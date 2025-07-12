@@ -1,1166 +1,431 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gin Bar - Aperitivo e Mixology</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 3rem;
-            color: white;
-        }
-        
-        .header h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-        
-        .header p {
-            font-size: 1.3rem;
-            font-weight: 300;
-            opacity: 0.9;
-        }
-        
-        .back-button {
-            position: fixed;
-            top: 2rem;
-            left: 2rem;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            border: none;
-            border-radius: 50px;
-            padding: 1rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #333;
-            cursor: pointer;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            z-index: 1000;
-            display: none;
-        }
-        
-        .back-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-        }
-        
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        
-        .category-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-        }
-        
-        .category-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
-        }
-        
-        .category-image {
-            width: 100%;
-            height: 200px;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .category-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-        
-        .category-card:hover .category-image img {
-            transform: scale(1.1);
-        }
-        
-        .category-image::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .category-card:hover .category-image::after {
-            opacity: 1;
-        }
-        
-        .category-content {
-            padding: 2rem;
-        }
-        
-        .category-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-        
-        .category-description {
-            color: #666;
-            font-size: 1rem;
-            line-height: 1.5;
-            margin-bottom: 1.5rem;
-        }
-        
-        .explore-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 0.8rem 2rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-        
-        .explore-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-        
-        .page-content {
-            display: none;
-        }
-        
-        .page-content.active {
-            display: block;
-        }
-        
-        .category-header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 3rem 2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-        
-        .category-header h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 1rem;
-        }
-        
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .product-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-        
-        .product-name {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-        
-        .product-description {
-            color: #666;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            margin-bottom: 1rem;
-        }
-        
-        .product-price {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #667eea;
-        }
-        
-        .product-detail {
-            display: none;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 3rem 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-        
-        .product-detail.active {
-            display: block;
-        }
-        
-        .product-image {
-            width: 200px;
-            height: 300px;
-            border-radius: 15px;
-            margin: 0 auto 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .gelato-image {
-            width: 150px;
-            height: 200px;
-            border-radius: 15px;
-            margin: 0 auto 1rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
-        }
-        
-        .product-detail h3 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-        
-        .product-detail .product-price {
-            font-size: 2rem;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .product-specs {
-            background: rgba(102, 126, 234, 0.1);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .spec-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        
-        .spec-label {
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .spec-value {
-            color: #666;
-        }
-        
-        .footer {
-            background: rgba(51, 51, 51, 0.95);
-            backdrop-filter: blur(20px);
-            color: white;
-            padding: 3rem 2rem;
-            text-align: center;
-            border-radius: 20px;
-            margin-top: 3rem;
-        }
-        
-        .footer h3 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        
-        .footer p {
-            font-size: 1.1rem;
-            opacity: 0.8;
-            margin-bottom: 2rem;
-        }
-        
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        .social-link {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            color: white;
-            text-decoration: none;
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-        
-        .instagram {
-            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-        }
-        
-        .phone {
-            background: linear-gradient(45deg, #00c851 0%, #007e33 100%);
-        }
-        
-        .social-link:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-        
-        .copyright {
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
-        }
-        
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2.5rem;
-            }
-            
-            .categories-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .products-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .social-links {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .back-button {
-                top: 1rem;
-                left: 1rem;
-                padding: 0.8rem 1.2rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <button class="back-button" onclick="goBack()">← Indietro</button>
-    
-    <div class="container">
-        <!-- Homepage -->
-        <div id="homepage" class="page-content active">
-            <div class="header">
-                <h1>Gin Bar</h1>
-                <p>Scopri le nostre proposte per un aperitivo indimenticabile</p>
+import './App.css'
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronDown, Github, Download, BookOpen, Zap, Brain, Atom } from 'lucide-react'
+import ciuSchemaImage from './assets/ciu_schema.png'
+
+function App() {
+  const [activeSection, setActiveSection] = useState('hero')
+  const [isVisible, setIsVisible] = useState({})
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVisible(prev => ({
+            ...prev,
+            [entry.target.id]: entry.isIntersecting
+          }))
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id)
+          }
+        })
+      },
+      { threshold: 0.3 }
+    )
+
+    document.querySelectorAll('section[id]').forEach((section) => {
+      observer.observe(section)
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
+  const scrollToSection = (sectionId) => {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      {/* Navigation */}
+      <nav className="fixed top-0 w-full z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <motion.div 
+              className="text-2xl font-bold text-white"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              CIU Schema
+            </motion.div>
+            <div className="hidden md:flex space-x-8">
+              {['hero', 'formula', 'schema', 'components', 'applications'].map((section) => (
+                <button
+                  key={section}
+                  onClick={() => scrollToSection(section)}
+                  className={`text-sm font-medium transition-colors duration-200 ${
+                    activeSection === section 
+                      ? 'text-cyan-400' 
+                      : 'text-gray-300 hover:text-white'
+                  }`}
+                >
+                  {section.charAt(0).toUpperCase() + section.slice(1)}
+                </button>
+              ))}
             </div>
-            
-            <div class="categories-grid">
-                <div class="category-card" onclick="showCategory('apericena')">
-                    <div class="category-image">
-                        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Apericena" loading="lazy">
+            <motion.a
+              href="https://github.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-300 hover:text-white transition-colors"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Github size={24} />
+            </motion.a>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section id="hero" className="min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20"></div>
+        <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
+              Schema <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">CIU</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
+              Coerenza Informazionale Unificata
+            </p>
+            <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto">
+              Una formula rivoluzionaria per analizzare la coerenza in sistemi informativi complessi
+            </p>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          >
+            <button
+              onClick={() => scrollToSection('formula')}
+              className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-semibold rounded-lg hover:from-cyan-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
+              Esplora la Formula
+            </button>
+            <button
+              onClick={() => scrollToSection('schema')}
+              className="px-8 py-4 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
+            >
+              Visualizza Schema
+            </button>
+          </motion.div>
+        </div>
+        
+        <motion.div
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <ChevronDown className="text-white/60" size={32} />
+        </motion.div>
+      </section>
+
+      {/* Formula Section */}
+      <section id="formula" className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible.formula ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              La Formula CIU
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Una rappresentazione matematica elegante della coerenza informazionale
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={isVisible.formula ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="bg-black/30 backdrop-blur-md rounded-2xl p-8 md:p-12 border border-white/10 mb-12"
+          >
+            <div className="text-center">
+              <div className="text-3xl md:text-5xl font-mono text-cyan-400 mb-8 leading-relaxed">
+                C(x,t) = <span className="text-purple-400">I(x)</span> / <span className="text-pink-400">D(x,t)</span> · (1 - <span className="text-green-400">∇²Φ(x,t)</span>)
+              </div>
+              <p className="text-gray-300 text-lg">
+                Dove ogni componente rappresenta un aspetto fondamentale dell'informazione
+              </p>
+            </div>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                symbol: 'I(x)',
+                name: 'Informazione Locale',
+                description: 'Misura dell\'entropia e del contenuto informativo in un punto specifico',
+                color: 'from-purple-500 to-purple-700',
+                icon: <BookOpen className="w-8 h-8" />
+              },
+              {
+                symbol: 'D(x,t)',
+                name: 'Dissonanza',
+                description: 'Variazione spazio-temporale che introduce instabilità nel sistema',
+                color: 'from-pink-500 to-pink-700',
+                icon: <Zap className="w-8 h-8" />
+              },
+              {
+                symbol: '∇²Φ(x,t)',
+                name: 'Potenziale Quantico',
+                description: 'Campo scalare che modula la coerenza informazionale',
+                color: 'from-green-500 to-green-700',
+                icon: <Atom className="w-8 h-8" />
+              }
+            ].map((component, index) => (
+              <motion.div
+                key={component.symbol}
+                initial={{ opacity: 0, y: 30 }}
+                animate={isVisible.formula ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.4 + index * 0.1 }}
+                className="bg-black/20 backdrop-blur-md rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300"
+              >
+                <div className={`w-16 h-16 rounded-lg bg-gradient-to-br ${component.color} flex items-center justify-center mb-4 text-white`}>
+                  {component.icon}
+                </div>
+                <h3 className="text-2xl font-mono text-white mb-2">{component.symbol}</h3>
+                <h4 className="text-lg font-semibold text-gray-300 mb-3">{component.name}</h4>
+                <p className="text-gray-400">{component.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Schema Section */}
+      <section id="schema" className="py-20 px-4 sm:px-6 lg:px-8 bg-black/20">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible.schema ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Schema Fisico
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Visualizzazione del flusso di informazioni attraverso i componenti della formula
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={isVisible.schema ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="bg-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/10 mb-12"
+          >
+            <img 
+              src={ciuSchemaImage} 
+              alt="Schema Fisico della Formula CIU" 
+              className="w-full h-auto rounded-lg shadow-2xl"
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible.schema ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-center"
+          >
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
+                <Download size={20} />
+                Scarica PNG
+              </button>
+              <button className="px-6 py-3 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
+                <Download size={20} />
+                Scarica PDF
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Components Section */}
+      <section id="components" className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible.components ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Componenti del Sistema
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Ogni elemento contribuisce alla coerenza informazionale complessiva
+            </p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-12">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={isVisible.components ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="space-y-8"
+            >
+              <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/10">
+                <h3 className="text-2xl font-bold text-cyan-400 mb-4">Input Components</h3>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-3 h-3 bg-purple-500 rounded-full mt-2"></div>
+                    <div>
+                      <h4 className="text-lg font-semibold text-white">I(x) - Informazione Locale</h4>
+                      <p className="text-gray-400">Entropia e contenuto informativo misurabile</p>
                     </div>
-                    <div class="category-content">
-                        <h3 class="category-title">🍽️ Apericena</h3>
-                        <p class="category-description">Bruschette, taglieri e stuzzichini per condividere momenti speciali</p>
-                        <button class="explore-button">Esplora il Menu</button>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-3 h-3 bg-pink-500 rounded-full mt-2"></div>
+                    <div>
+                      <h4 className="text-lg font-semibold text-white">D(x,t) - Dissonanza</h4>
+                      <p className="text-gray-400">Variazione temporale e spaziale del sistema</p>
                     </div>
-                </div>
-                
-                <div class="category-card" onclick="showCategory('bevande')">
-                    <div class="category-image">
-                        <img src="https://images.unsplash.com/photo-1551538827-9c037cb4f32a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Bevande" loading="lazy">
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-3 h-3 bg-green-500 rounded-full mt-2"></div>
+                    <div>
+                      <h4 className="text-lg font-semibold text-white">∇²Φ(x,t) - Potenziale</h4>
+                      <p className="text-gray-400">Campo scalare quantico/informativo</p>
                     </div>
-                    <div class="category-content">
-                        <h3 class="category-title">🥤 Bevande</h3>
-                        <p class="category-description">Acque, bibite e succhi per accompagnare il tuo aperitivo</p>
-                        <button class="explore-button">Esplora il Menu</button>
-                    </div>
+                  </div>
                 </div>
-                
-                <div class="category-card" onclick="showCategory('vini')">
-                    <div class="category-image">
-                        <img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Vini e Bollicine" loading="lazy">
-                    </div>
-                    <div class="category-content">
-                        <h3 class="category-title">🍷 Vini e Bollicine</h3>
-                        <p class="category-description">Selezione di vini pregiati e bollicine per ogni occasione</p>
-                        <button class="explore-button">Esplora il Menu</button>
-                    </div>
-                </div>
-                
-                <div class="category-card" onclick="showCategory('mixology')">
-                    <div class="category-image">
-                        <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Mixology" loading="lazy">
-                    </div>
-                    <div class="category-content">
-                        <h3 class="category-title">🍸 Mixology</h3>
-                        <p class="category-description">Cocktail creativi e drink signature preparati dai nostri bartender</p>
-                        <button class="explore-button">Esplora il Menu</button>
-                    </div>
-                </div>
-                
-                <div class="category-card" onclick="showCategory('gin')">
-                    <div class="category-image">
-                        <img src="https://images.unsplash.com/photo-1569529465841-dfecdab7503b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="I Nostri Gin" loading="lazy">
-                    </div>
-                    <div class="category-content">
-                        <h3 class="category-title">🍾 I Nostri Gin</h3>
-                        <p class="category-description">Collezione esclusiva di gin premium e artigianali</p>
-                        <button class="explore-button">Esplora il Menu</button>
-                    </div>
-                </div>
-                
-                <div class="category-card" onclick="showCategory('gelati')">
-                    <div class="category-image">
-                        <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Gelati" loading="lazy">
-                    </div>
-                    <div class="category-content">
-                        <h3 class="category-title">🍦 Gelati</h3>
-                        <p class="category-description">Selezione di gelati artigianali e specialità dolci</p>
-                        <button class="explore-button">Esplora il Menu</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+              </div>
+            </motion.div>
 
-        <!-- Apericena Page -->
-        <div id="apericena" class="page-content">
-            <div class="category-header">
-                <h2>🍽️ Apericena</h2>
-                <p>Bruschette, taglieri e stuzzichini per condividere momenti speciali</p>
-            </div>
-            
-            <div class="products-grid">
-                <div class="product-card">
-                    <div class="product-name">Bruschette Miste</div>
-                    <div class="product-description">Pane casereccio con pomodoro, olive e paté</div>
-                    <div class="product-price">€6,00</div>
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={isVisible.components ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="space-y-8"
+            >
+              <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/10">
+                <h3 className="text-2xl font-bold text-purple-400 mb-4">Output</h3>
+                <div className="flex items-start gap-4">
+                  <div className="w-3 h-3 bg-cyan-500 rounded-full mt-2"></div>
+                  <div>
+                    <h4 className="text-lg font-semibold text-white">C(x,t) - Coerenza</h4>
+                    <p className="text-gray-400">Risultato finale che quantifica la coerenza informazionale del sistema</p>
+                  </div>
                 </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Tagliere Classico Grande</div>
-                    <div class="product-description">Prosciutto crudo, Mortadella, Capocollo, Salame, Salsiccia Secca, Bruschette, Pecorino, Formaggio Stagionato, Mozzarella</div>
-                    <div class="product-price">€16,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Tagliere Classico Piccolo</div>
-                    <div class="product-description">Prosciutto crudo, Salame, Salsiccia Secca, Bruschette, Pecorino, Formaggio Stagionato</div>
-                    <div class="product-price">€12,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Tagliere Vegetariano</div>
-                    <div class="product-description">Bruschette, Pecorino, Formaggio Stagionato, Mozzarella, Olive, Pomodorini</div>
-                    <div class="product-price">€10,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Olive Ascolane (6 pz)</div>
-                    <div class="product-description">Olive ripiene fritte, specialità marchigiana</div>
-                    <div class="product-price">€5,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Patatine Fritte</div>
-                    <div class="product-description">Patatine fresche tagliate a mano</div>
-                    <div class="product-price">€4,00</div>
-                </div>
-            </div>
-        </div>
+              </div>
 
-        <!-- Bevande Page -->
-        <div id="bevande" class="page-content">
-            <div class="category-header">
-                <h2>🥤 Bevande</h2>
-                <p>Acque, bibite e succhi per accompagnare il tuo aperitivo</p>
-            </div>
-            
-            <div class="products-grid">
-                <div class="product-card">
-                    <div class="product-name">Acqua Naturale 50cl</div>
-                    <div class="product-description">Acqua minerale naturale</div>
-                    <div class="product-price">€1,50</div>
+              <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/10">
+                <h3 className="text-2xl font-bold text-yellow-400 mb-4">Processo</h3>
+                <p className="text-gray-300 mb-4">
+                  La formula combina l'informazione locale con la dissonanza, modulata dal potenziale quantico, 
+                  per produrre una misura unificata della coerenza.
+                </p>
+                <div className="text-sm text-gray-400">
+                  <strong>Rapporto I/D:</strong> Bilancia informazione e instabilità<br/>
+                  <strong>Fattore (1-∇²Φ):</strong> Modula la coerenza finale
                 </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Acqua Frizzante 50cl</div>
-                    <div class="product-description">Acqua minerale frizzante</div>
-                    <div class="product-price">€1,50</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Coca Cola</div>
-                    <div class="product-description">Lattina 33cl</div>
-                    <div class="product-price">€2,50</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Coca Cola Zero</div>
-                    <div class="product-description">Lattina 33cl</div>
-                    <div class="product-price">€2,50</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Fanta</div>
-                    <div class="product-description">Lattina 33cl</div>
-                    <div class="product-price">€2,50</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Sprite</div>
-                    <div class="product-description">Lattina 33cl</div>
-                    <div class="product-price">€2,50</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Tè Freddo Pesca</div>
-                    <div class="product-description">Bottiglia 50cl</div>
-                    <div class="product-price">€2,50</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Tè Freddo Limone</div>
-                    <div class="product-description">Bottiglia 50cl</div>
-                    <div class="product-price">€2,50</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Succo ACE</div>
-                    <div class="product-description">Bottiglia 20cl</div>
-                    <div class="product-price">€2,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Succo Pesca</div>
-                    <div class="product-description">Bottiglia 20cl</div>
-                    <div class="product-price">€2,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Succo Pera</div>
-                    <div class="product-description">Bottiglia 20cl</div>
-                    <div class="product-price">€2,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Succo Ananas</div>
-                    <div class="product-description">Bottiglia 20cl</div>
-                    <div class="product-price">€2,00</div>
-                </div>
-            </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
+      </section>
 
-        <!-- Vini Page -->
-        <div id="vini" class="page-content">
-            <div class="category-header">
-                <h2>🍷 Vini e Bollicine</h2>
-                <p>Selezione di vini pregiati e bollicine per ogni occasione</p>
-            </div>
-            
-            <div class="products-grid">
-                <div class="product-card">
-                    <div class="product-name">Prosecco di Valdobbiadene DOCG</div>
-                    <div class="product-description">Bollicine eleganti e raffinate</div>
-                    <div class="product-price">€18,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Franciacorta DOCG</div>
-                    <div class="product-description">Metodo classico, bollicine premium</div>
-                    <div class="product-price">€25,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Vermentino di Sardegna DOC</div>
-                    <div class="product-description">Bianco fresco e minerale</div>
-                    <div class="product-price">€15,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Falanghina del Sannio DOC</div>
-                    <div class="product-description">Bianco aromatico campano</div>
-                    <div class="product-price">€14,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Chianti Classico DOCG</div>
-                    <div class="product-description">Rosso toscano tradizionale</div>
-                    <div class="product-price">€16,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Primitivo di Manduria DOC</div>
-                    <div class="product-description">Rosso pugliese intenso</div>
-                    <div class="product-price">€15,00</div>
-                </div>
-            </div>
-        </div>
+      {/* Applications Section */}
+      <section id="applications" className="py-20 px-4 sm:px-6 lg:px-8 bg-black/20">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible.applications ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Applicazioni
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Campi di utilizzo della formula CIU
+            </p>
+          </motion.div>
 
-        <!-- Mixology Page -->
-        <div id="mixology" class="page-content">
-            <div class="category-header">
-                <h2>🍸 Mixology</h2>
-                <p>Cocktail creativi e drink signature preparati dai nostri bartender</p>
-            </div>
-            
-            <div class="products-grid">
-                <div class="product-card">
-                    <div class="product-name">Aperol Spritz</div>
-                    <div class="product-description">Aperol, Prosecco, Soda, Arancia</div>
-                    <div class="product-price">€6,00</div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: 'Sistemi Informativi',
+                description: 'Analisi della coerenza in database distribuiti e sistemi di informazione complessi',
+                icon: <Brain className="w-12 h-12" />,
+                color: 'from-blue-500 to-cyan-500'
+              },
+              {
+                title: 'Fisica Quantistica',
+                description: 'Modellazione di fenomeni quantistici e studio delle dinamiche di coerenza',
+                icon: <Atom className="w-12 h-12" />,
+                color: 'from-purple-500 to-pink-500'
+              },
+              {
+                title: 'Dinamiche Spazio-Temporali',
+                description: 'Studio dell\'evoluzione dell\'informazione nel tempo e nello spazio',
+                icon: <Zap className="w-12 h-12" />,
+                color: 'from-green-500 to-teal-500'
+              }
+            ].map((app, index) => (
+              <motion.div
+                key={app.title}
+                initial={{ opacity: 0, y: 30 }}
+                animate={isVisible.applications ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.2 + index * 0.1 }}
+                className="bg-black/30 backdrop-blur-md rounded-xl p-8 border border-white/10 hover:border-white/20 transition-all duration-300 text-center group hover:scale-105"
+              >
+                <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${app.color} flex items-center justify-center mx-auto mb-6 text-white group-hover:scale-110 transition-transform duration-300`}>
+                  {app.icon}
                 </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Negroni</div>
-                    <div class="product-description">Gin, Vermouth Rosso, Bitter Campari</div>
-                    <div class="product-price">€8,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Gin Tonic</div>
-                    <div class="product-description">Gin premium, Acqua tonica, Lime</div>
-                    <div class="product-price">€7,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Moscow Mule</div>
-                    <div class="product-description">Vodka, Ginger Beer, Lime, Menta</div>
-                    <div class="product-price">€7,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Mojito</div>
-                    <div class="product-description">Rum Bianco, Menta, Lime, Zucchero, Soda</div>
-                    <div class="product-price">€7,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Old Fashioned</div>
-                    <div class="product-description">Bourbon, Zucchero, Angostura, Arancia</div>
-                    <div class="product-price">€9,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Cosmopolitan</div>
-                    <div class="product-description">Vodka, Triple Sec, Succo Cranberry, Lime</div>
-                    <div class="product-price">€8,00</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-name">Gin Bar Signature</div>
-                    <div class="product-description">Cocktail della casa con gin artigianale</div>
-                    <div class="product-price">€10,00</div>
-                </div>
-            </div>
+                <h3 className="text-xl font-bold text-white mb-4">{app.title}</h3>
+                <p className="text-gray-400">{app.description}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
+      </section>
 
-        <!-- Gin Page -->
-        <div id="gin" class="page-content">
-            <div class="category-header">
-                <h2>🍾 I Nostri Gin</h2>
-                <p>Collezione esclusiva di gin premium e artigianali</p>
+      {/* Footer */}
+      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-white/10">
+        <div className="max-w-6xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h3 className="text-2xl font-bold text-white mb-4">Schema CIU</h3>
+            <p className="text-gray-400 mb-6">
+              Coerenza Informazionale Unificata - Una nuova prospettiva sull'analisi dell'informazione
+            </p>
+            <div className="flex justify-center space-x-6">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Github size={24} />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Download size={24} />
+              </a>
             </div>
-            
-            <div class="products-grid">
-                <div class="product-card" onclick="showProduct('hendricks')">
-                    <div class="product-name">Hendrick's Gin</div>
-                    <div class="product-description">Gin scozzese con cetriolo e rosa</div>
-                    <div class="product-price">€8,00</div>
-                </div>
-                
-                <div class="product-card" onclick="showProduct('bombay')">
-                    <div class="product-name">Bombay Sapphire</div>
-                    <div class="product-description">London Dry Gin con 10 botaniche</div>
-                    <div class="product-price">€7,00</div>
-                </div>
-                
-                <div class="product-card" onclick="showProduct('tanqueray')">
-                    <div class="product-name">Tanqueray</div>
-                    <div class="product-description">London Dry Gin classico</div>
-                    <div class="product-price">€6,00</div>
-                </div>
-                
-                <div class="product-card" onclick="showProduct('monkey47')">
-                    <div class="product-name">Monkey 47</div>
-                    <div class="product-description">Gin tedesco con 47 botaniche</div>
-                    <div class="product-price">€12,00</div>
-                </div>
-                
-                <div class="product-card" onclick="showProduct('botanist')">
-                    <div class="product-name">The Botanist</div>
-                    <div class="product-description">Gin scozzese di Islay con 22 botaniche</div>
-                    <div class="product-price">€10,00</div>
-                </div>
-                
-                <div class="product-card" onclick="showProduct('malfy')">
-                    <div class="product-name">Malfy Gin</div>
-                    <div class="product-description">Gin italiano con limoni della Costiera</div>
-                    <div class="product-price">€8,00</div>
-                </div>
+            <div className="mt-8 pt-8 border-t border-white/10">
+              <p className="text-gray-500 text-sm">
+                © 2025 Schema CIU. Progetto open source.
+              </p>
             </div>
+          </motion.div>
         </div>
-
-        <!-- Gelati Page -->
-        <div id="gelati" class="page-content">
-            <div class="category-header">
-                <h2>🍦 Gelati</h2>
-                <p>Selezione di gelati artigianali e specialità dolci</p>
-            </div>
-            
-            <div class="products-grid">
-                <div class="product-card" onclick="showProduct('cucciolone')">
-                    <div class="gelato-image">🍦</div>
-                    <div class="product-name">Cucciolone</div>
-                    <div class="product-description">Gelato artigianale cremoso e goloso</div>
-                    <div class="product-price">€3,50</div>
-                </div>
-                
-                <div class="product-card" onclick="showProduct('whitechocolate')">
-                    <div class="gelato-image">🤍</div>
-                    <div class="product-name">White Chocolate</div>
-                    <div class="product-description">Gelato al cioccolato bianco premium</div>
-                    <div class="product-price">€4,00</div>
-                </div>
-                
-                <div class="product-card" onclick="showProduct('cordarica')">
-                    <div class="gelato-image">🍫</div>
-                    <div class="product-name">Corda Rica</div>
-                    <div class="product-description">Gelato ricco e intenso</div>
-                    <div class="product-price">€3,80</div>
-                </div>
-                
-                <div class="product-card" onclick="showProduct('magnum')">
-                    <div class="gelato-image">🍦</div>
-                    <div class="product-name">Magnum®</div>
-                    <div class="product-description">Il classico gelato con cioccolato</div>
-                    <div class="product-price">€4,50</div>
-                </div>
-                
-                <div class="product-card" onclick="showProduct('bomboniera')">
-                    <div class="gelato-image">🎁</div>
-                    <div class="product-name">Bomboniera Classic</div>
-                    <div class="product-description">Gelato elegante e raffinato</div>
-                    <div class="product-price">€4,20</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Product Details -->
-        <div id="hendricks" class="product-detail">
-            <div class="product-image">🍾</div>
-            <h3>Hendrick's Gin</h3>
-            <div class="product-price">€8,00</div>
-            <div class="product-specs">
-                <div class="spec-item">
-                    <span class="spec-label">Origine:</span>
-                    <span class="spec-value">Scozia</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Gradazione:</span>
-                    <span class="spec-value">41.4% Vol</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Botaniche:</span>
-                    <span class="spec-value">Ginepro, Coriandolo, Cetriolo, Rosa</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Note:</span>
-                    <span class="spec-value">Fresco, floreale, distintivo</span>
-                </div>
-            </div>
-            <p>Hendrick's è un gin scozzese unico, distillato con cetriolo e petali di rosa che gli conferiscono un carattere distintivo e rinfrescante. Perfetto per un gin tonic elegante.</p>
-        </div>
-
-        <div id="bombay" class="product-detail">
-            <div class="product-image">🍾</div>
-            <h3>Bombay Sapphire</h3>
-            <div class="product-price">€7,00</div>
-            <div class="product-specs">
-                <div class="spec-item">
-                    <span class="spec-label">Origine:</span>
-                    <span class="spec-value">Inghilterra</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Gradazione:</span>
-                    <span class="spec-value">40% Vol</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Botaniche:</span>
-                    <span class="spec-value">10 botaniche selezionate</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Note:</span>
-                    <span class="spec-value">Equilibrato, aromatico, versatile</span>
-                </div>
-            </div>
-            <p>London Dry Gin premium con 10 botaniche accuratamente selezionate. Il suo sapore equilibrato lo rende perfetto per ogni cocktail classico.</p>
-        </div>
-
-        <div id="tanqueray" class="product-detail">
-            <div class="product-image">🍾</div>
-            <h3>Tanqueray</h3>
-            <div class="product-price">€6,00</div>
-            <div class="product-specs">
-                <div class="spec-item">
-                    <span class="spec-label">Origine:</span>
-                    <span class="spec-value">Inghilterra</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Gradazione:</span>
-                    <span class="spec-value">43.1% Vol</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Botaniche:</span>
-                    <span class="spec-value">Ginepro, Coriandolo, Angelica, Liquirizia</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Note:</span>
-                    <span class="spec-value">Secco, intenso, classico</span>
-                </div>
-            </div>
-            <p>Il London Dry Gin per eccellenza, con una ricetta immutata dal 1830. Carattere deciso e sapore pulito, ideale per i puristi del gin.</p>
-        </div>
-
-        <div id="monkey47" class="product-detail">
-            <div class="product-image">🍾</div>
-            <h3>Monkey 47</h3>
-            <div class="product-price">€12,00</div>
-            <div class="product-specs">
-                <div class="spec-item">
-                    <span class="spec-label">Origine:</span>
-                    <span class="spec-value">Germania</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Gradazione:</span>
-                    <span class="spec-value">47% Vol</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Botaniche:</span>
-                    <span class="spec-value">47 botaniche diverse</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Note:</span>
-                    <span class="spec-value">Complesso, aromatico, unico</span>
-                </div>
-            </div>
-            <p>Gin tedesco straordinario con 47 botaniche che creano un profilo aromatico incredibilmente complesso. Un'esperienza sensoriale unica per gli intenditori.</p>
-        </div>
-
-        <div id="botanist" class="product-detail">
-            <div class="product-image">🍾</div>
-            <h3>The Botanist</h3>
-            <div class="product-price">€10,00</div>
-            <div class="product-specs">
-                <div class="spec-item">
-                    <span class="spec-label">Origine:</span>
-                    <span class="spec-value">Scozia (Islay)</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Gradazione:</span>
-                    <span class="spec-value">46% Vol</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Botaniche:</span>
-                    <span class="spec-value">22 botaniche di Islay</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Note:</span>
-                    <span class="spec-value">Erbaceo, marino, selvaggio</span>
-                </div>
-            </div>
-            <p>Gin scozzese dell'isola di Islay, prodotto con botaniche locali raccolte a mano. Il carattere selvaggio dell'isola in ogni sorso.</p>
-        </div>
-
-        <div id="malfy" class="product-detail">
-            <div class="product-image">🍾</div>
-            <h3>Malfy Gin</h3>
-            <div class="product-price">€8,00</div>
-            <div class="product-specs">
-                <div class="spec-item">
-                    <span class="spec-label">Origine:</span>
-                    <span class="spec-value">Italia</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Gradazione:</span>
-                    <span class="spec-value">41% Vol</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Botaniche:</span>
-                    <span class="spec-value">Ginepro, Limoni della Costiera</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Note:</span>
-                    <span class="spec-value">Agrumato, mediterraneo, fresco</span>
-                </div>
-            </div>
-            <p>Gin italiano che cattura l'essenza del Mediterraneo con limoni della Costiera Amalfitana. Fresco e solare come l'estate italiana.</p>
-        </div>
-
-        <!-- Gelati Product Details -->
-        <div id="cucciolone" class="product-detail">
-            <div class="gelato-image">🍦</div>
-            <h3>Cucciolone</h3>
-            <div class="product-price">€3,50</div>
-            <div class="product-specs">
-                <div class="spec-item">
-                    <span class="spec-label">Tipo:</span>
-                    <span class="spec-value">Gelato artigianale</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Formato:</span>
-                    <span class="spec-value">Cono/Coppetta</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Caratteristiche:</span>
-                    <span class="spec-value">Cremoso e goloso</span>
-                </div>
-            </div>
-            <p>Il Cucciolone è un gelato artigianale dalla consistenza cremosa e dal sapore intenso. Perfetto per chi cerca un momento di dolcezza autentica.</p>
-        </div>
-
-        <div id="whitechocolate" class="product-detail">
-            <div class="gelato-image">🤍</div>
-            <h3>White Chocolate</h3>
-            <div class="product-price">€4,00</div>
-            <div class="product-specs">
-                <div class="spec-item">
-                    <span class="spec-label">Tipo:</span>
-                    <span class="spec-value">Gelato al cioccolato bianco</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Formato:</span>
-                    <span class="spec-value">Premium</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Caratteristiche:</span>
-                    <span class="spec-value">Delicato e raffinato</span>
-                </div>
-            </div>
-            <p>Gelato premium al cioccolato bianco di alta qualità. Il sapore delicato e la consistenza vellutata lo rendono una scelta elegante per i palati raffinati.</p>
-        </div>
-
-        <div id="cordarica" class="product-detail">
-            <div class="gelato-image">🍫</div>
-            <h3>Corda Rica</h3>
-            <div class="product-price">€3,80</div>
-            <div class="product-specs">
-                <div class="spec-item">
-                    <span class="spec-label">Tipo:</span>
-                    <span class="spec-value">Gelato ricco</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Formato:</span>
-                    <span class="spec-value">Specialità</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Caratteristiche:</span>
-                    <span class="spec-value">Intenso e corposo</span>
-                </div>
-            </div>
-            <p>Corda Rica è un gelato dal sapore intenso e dalla consistenza ricca. Una specialità che soddisfa chi cerca un'esperienza gustativa piena e appagante.</p>
-        </div>
-
-        <div id="magnum" class="product-detail">
-            <div class="gelato-image">🍦</div>
-            <h3>Magnum®</h3>
-            <div class="product-price">€4,50</div>
-            <div class="product-specs">
-                <div class="spec-item">
-                    <span class="spec-label">Tipo:</span>
-                    <span class="spec-value">Gelato con cioccolato</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Formato:</span>
-                    <span class="spec-value">Stecco premium</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Caratteristiche:</span>
-                    <span class="spec-value">Classico e iconico</span>
-                </div>
-            </div>
-            <p>Il classico Magnum® con la sua inconfondibile copertura di cioccolato e il gelato cremoso all'interno. Un'icona del piacere che non passa mai di moda.</p>
-        </div>
-
-        <div id="bomboniera" class="product-detail">
-            <div class="gelato-image">🎁</div>
-            <h3>Bomboniera Classic</h3>
-            <div class="product-price">€4,20</div>
-            <div class="product-specs">
-                <div class="spec-item">
-                    <span class="spec-label">Tipo:</span>
-                    <span class="spec-value">Gelato elegante</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Formato:</span>
-                    <span class="spec-value">Classic</span>
-                </div>
-                <div class="spec-item">
-                    <span class="spec-label">Caratteristiche:</span>
-                    <span class="spec-value">Raffinato e prezioso</span>
-                </div>
-            </div>
-            <p>Bomboniera Classic è un gelato elegante e raffinato, perfetto per chi cerca una dolcezza preziosa. Come un piccolo regalo per il palato.</p>
-        </div>
-
-        <!-- Footer -->
-        <div class="footer">
-            <h3>Gin Bar</h3>
-            <p>Aperitivo e Mixology</p>
-            
-            <div class="social-links">
-                <a href="https://instagram.com/people_terni" class="social-link instagram">
-                    📷 @Zadozhnyy98
-                </a>
-                <a href="tel:+390744198343" class="social-link phone">
-                    📞 0744 1983433
-                </a>
-            </div>
-            
-            <div class="copyright">
-                © 2024 Gin Bar - Viale Curio Dentato, 21, 05100 Terni TR
-            </div>
-        </div>
+      </footer>
     </div>
+  )
+}
 
-    <script>
-        let currentPage = 'homepage';
-        let pageHistory = [];
-
-        function showCategory(category) {
-            pageHistory.push(currentPage);
-            currentPage = category;
-            
-            // Nascondi tutte le pagine
-            document.querySelectorAll('.page-content').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // Mostra la categoria selezionata
-            document.getElementById(category).classList.add('active');
-            
-            // Mostra il pulsante indietro
-            document.querySelector('.back-button').style.display = 'block';
-            
-            // Scroll to top
-            window.scrollTo(0, 0);
-        }
-
-        function showProduct(product) {
-            pageHistory.push(currentPage);
-            currentPage = product;
-            
-            // Nascondi tutte le pagine
-            document.querySelectorAll('.page-content').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // Nascondi tutti i dettagli prodotto
-            document.querySelectorAll('.product-detail').forEach(detail => {
-                detail.classList.remove('active');
-            });
-            
-            // Mostra il prodotto selezionato
-            document.getElementById(product).classList.add('active');
-            
-            // Mostra il pulsante indietro
-            document.querySelector('.back-button').style.display = 'block';
-            
-            // Scroll to top
-            window.scrollTo(0, 0);
-        }
-
-        function goBack() {
-            if (pageHistory.length > 0) {
-                const previousPage = pageHistory.pop();
-                currentPage = previousPage;
-                
-                // Nascondi tutte le pagine e dettagli
-                document.querySelectorAll('.page-content').forEach(page => {
-                    page.classList.remove('active');
-                });
-                document.querySelectorAll('.product-detail').forEach(detail => {
-                    detail.classList.remove('active');
-                });
-                
-                // Mostra la pagina precedente
-                if (previousPage === 'homepage') {
-                    document.getElementById('homepage').classList.add('active');
-                    document.querySelector('.back-button').style.display = 'none';
-                } else {
-                    document.getElementById(previousPage).classList.add('active');
-                }
-                
-                // Scroll to top
-                window.scrollTo(0, 0);
-            }
-        }
-
-        // Gestione del pulsante indietro del browser
-        window.addEventListener('popstate', function(event) {
-            goBack();
-        });
-
-        // Aggiungi stato alla cronologia del browser
-        window.addEventListener('load', function() {
-            history.replaceState({page: 'homepage'}, '', '');
-        });
-    </script>
-</body>
-</html>
+export default App
 
