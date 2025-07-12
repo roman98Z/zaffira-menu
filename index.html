@@ -1,431 +1,121 @@
-import './App.css'
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, Github, Download, BookOpen, Zap, Brain, Atom } from 'lucide-react'
-import ciuSchemaImage from './assets/ciu_schema.png'
+# Ri-esecuzione del codice dopo il reset dell'ambiente per ricreare i file e lo zip
 
-function App() {
-  const [activeSection, setActiveSection] = useState('hero')
-  const [isVisible, setIsVisible] = useState({})
+import os
+import zipfile
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          setIsVisible(prev => ({
-            ...prev,
-            [entry.target.id]: entry.isIntersecting
-          }))
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id)
-          }
-        })
-      },
-      { threshold: 0.3 }
-    )
+project_dir = "/mnt/data/CIU_AI_Core"
+os.makedirs(project_dir, exist_ok=True)
 
-    document.querySelectorAll('section[id]').forEach((section) => {
-      observer.observe(section)
-    })
+files = {
+    "ciu_engine.py": '''\
+# ciu_engine.py
+# Motore per il calcolo della Coerenza Informazionale Universale (CIU)
 
-    return () => observer.disconnect()
-  }, [])
+def compute_ciu(I, D, phi_laplacian):
+    """
+    Calcola la coerenza informazionale C(x,t)
+    I: informazione locale
+    D: dissonanza spazio-temporale
+    phi_laplacian: laplaciano del potenziale quantico
+    """
+    try:
+        return (I / D) * (1 - phi_laplacian)
+    except ZeroDivisionError:
+        return float('inf')
+''',
 
-  const scrollToSection = (sectionId) => {
-    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' })
-  }
+    "memory.py": '''\
+# memory.py
+# Simulazione di memoria coerente (database semplice in RAM)
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <motion.div 
-              className="text-2xl font-bold text-white"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              CIU Schema
-            </motion.div>
-            <div className="hidden md:flex space-x-8">
-              {['hero', 'formula', 'schema', 'components', 'applications'].map((section) => (
-                <button
-                  key={section}
-                  onClick={() => scrollToSection(section)}
-                  className={`text-sm font-medium transition-colors duration-200 ${
-                    activeSection === section 
-                      ? 'text-cyan-400' 
-                      : 'text-gray-300 hover:text-white'
-                  }`}
-                >
-                  {section.charAt(0).toUpperCase() + section.slice(1)}
-                </button>
-              ))}
-            </div>
-            <motion.a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-300 hover:text-white transition-colors"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Github size={24} />
-            </motion.a>
-          </div>
-        </div>
-      </nav>
+memory_store = {}
 
-      {/* Hero Section */}
-      <section id="hero" className="min-h-screen flex items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20"></div>
-        <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
-              Schema <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">CIU</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              Coerenza Informazionale Unificata
-            </p>
-            <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto">
-              Una formula rivoluzionaria per analizzare la coerenza in sistemi informativi complessi
-            </p>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-          >
-            <button
-              onClick={() => scrollToSection('formula')}
-              className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-semibold rounded-lg hover:from-cyan-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
-            >
-              Esplora la Formula
-            </button>
-            <button
-              onClick={() => scrollToSection('schema')}
-              className="px-8 py-4 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
-            >
-              Visualizza Schema
-            </button>
-          </motion.div>
-        </div>
-        
-        <motion.div
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          <ChevronDown className="text-white/60" size={32} />
-        </motion.div>
-      </section>
+def remember(key, info):
+    memory_store[key] = info
 
-      {/* Formula Section */}
-      <section id="formula" className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isVisible.formula ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              La Formula CIU
-            </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Una rappresentazione matematica elegante della coerenza informazionale
-            </p>
-          </motion.div>
+def recall(key):
+    return memory_store.get(key, None)
+''',
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isVisible.formula ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="bg-black/30 backdrop-blur-md rounded-2xl p-8 md:p-12 border border-white/10 mb-12"
-          >
-            <div className="text-center">
-              <div className="text-3xl md:text-5xl font-mono text-cyan-400 mb-8 leading-relaxed">
-                C(x,t) = <span className="text-purple-400">I(x)</span> / <span className="text-pink-400">D(x,t)</span> · (1 - <span className="text-green-400">∇²Φ(x,t)</span>)
-              </div>
-              <p className="text-gray-300 text-lg">
-                Dove ogni componente rappresenta un aspetto fondamentale dell'informazione
-              </p>
-            </div>
-          </motion.div>
+    "nlp_module.py": '''\
+# nlp_module.py
+# Modulo base di NLP per interpretare testo e estrarre informazione
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                symbol: 'I(x)',
-                name: 'Informazione Locale',
-                description: 'Misura dell\'entropia e del contenuto informativo in un punto specifico',
-                color: 'from-purple-500 to-purple-700',
-                icon: <BookOpen className="w-8 h-8" />
-              },
-              {
-                symbol: 'D(x,t)',
-                name: 'Dissonanza',
-                description: 'Variazione spazio-temporale che introduce instabilità nel sistema',
-                color: 'from-pink-500 to-pink-700',
-                icon: <Zap className="w-8 h-8" />
-              },
-              {
-                symbol: '∇²Φ(x,t)',
-                name: 'Potenziale Quantico',
-                description: 'Campo scalare che modula la coerenza informazionale',
-                color: 'from-green-500 to-green-700',
-                icon: <Atom className="w-8 h-8" />
-              }
-            ].map((component, index) => (
-              <motion.div
-                key={component.symbol}
-                initial={{ opacity: 0, y: 30 }}
-                animate={isVisible.formula ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.8, delay: 0.4 + index * 0.1 }}
-                className="bg-black/20 backdrop-blur-md rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300"
-              >
-                <div className={`w-16 h-16 rounded-lg bg-gradient-to-br ${component.color} flex items-center justify-center mb-4 text-white`}>
-                  {component.icon}
-                </div>
-                <h3 className="text-2xl font-mono text-white mb-2">{component.symbol}</h3>
-                <h4 className="text-lg font-semibold text-gray-300 mb-3">{component.name}</h4>
-                <p className="text-gray-400">{component.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+def extract_information(text):
+    # Placeholder: Estrai un valore tra 0 e 1 per simulare "informazione locale"
+    return min(1.0, max(0.0, len(set(text)) / 100))
+''',
 
-      {/* Schema Section */}
-      <section id="schema" className="py-20 px-4 sm:px-6 lg:px-8 bg-black/20">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isVisible.schema ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Schema Fisico
-            </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Visualizzazione del flusso di informazioni attraverso i componenti della formula
-            </p>
-          </motion.div>
+    "sensor_interface.py": '''\
+# sensor_interface.py
+# Simulatore di input sensoriale (es. visione, testo, suono)
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isVisible.schema ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="bg-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/10 mb-12"
-          >
-            <img 
-              src={ciuSchemaImage} 
-              alt="Schema Fisico della Formula CIU" 
-              className="w-full h-auto rounded-lg shadow-2xl"
-            />
-          </motion.div>
+def get_input():
+    # Simula un input testuale
+    return "osservo un cambiamento nel campo quantico locale"
+''',
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isVisible.schema ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-center"
-          >
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
-                <Download size={20} />
-                Scarica PNG
-              </button>
-              <button className="px-6 py-3 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
-                <Download size={20} />
-                Scarica PDF
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+    "reasoning_loop.py": '''\
+# reasoning_loop.py
+# Loop di ragionamento coerente
 
-      {/* Components Section */}
-      <section id="components" className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isVisible.components ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Componenti del Sistema
-            </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Ogni elemento contribuisce alla coerenza informazionale complessiva
-            </p>
-          </motion.div>
+from ciu_engine import compute_ciu
+from sensor_interface import get_input
+from nlp_module import extract_information
+from memory import remember, recall
 
-          <div className="grid lg:grid-cols-2 gap-12">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={isVisible.components ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="space-y-8"
-            >
-              <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/10">
-                <h3 className="text-2xl font-bold text-cyan-400 mb-4">Input Components</h3>
-                <div className="space-y-4">
-                  <div className="flex items-start gap-4">
-                    <div className="w-3 h-3 bg-purple-500 rounded-full mt-2"></div>
-                    <div>
-                      <h4 className="text-lg font-semibold text-white">I(x) - Informazione Locale</h4>
-                      <p className="text-gray-400">Entropia e contenuto informativo misurabile</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-3 h-3 bg-pink-500 rounded-full mt-2"></div>
-                    <div>
-                      <h4 className="text-lg font-semibold text-white">D(x,t) - Dissonanza</h4>
-                      <p className="text-gray-400">Variazione temporale e spaziale del sistema</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-3 h-3 bg-green-500 rounded-full mt-2"></div>
-                    <div>
-                      <h4 className="text-lg font-semibold text-white">∇²Φ(x,t) - Potenziale</h4>
-                      <p className="text-gray-400">Campo scalare quantico/informativo</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+def step():
+    raw_input = get_input()
+    I = extract_information(raw_input)
+    D = 0.3  # fissa per esempio
+    phi_laplacian = 0.3
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={isVisible.components ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="space-y-8"
-            >
-              <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/10">
-                <h3 className="text-2xl font-bold text-purple-400 mb-4">Output</h3>
-                <div className="flex items-start gap-4">
-                  <div className="w-3 h-3 bg-cyan-500 rounded-full mt-2"></div>
-                  <div>
-                    <h4 className="text-lg font-semibold text-white">C(x,t) - Coerenza</h4>
-                    <p className="text-gray-400">Risultato finale che quantifica la coerenza informazionale del sistema</p>
-                  </div>
-                </div>
-              </div>
+    C = compute_ciu(I, D, phi_laplacian)
+    print(f"Input: {raw_input}")
+    print(f"Coerenza calcolata: {C:.3f}")
 
-              <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/10">
-                <h3 className="text-2xl font-bold text-yellow-400 mb-4">Processo</h3>
-                <p className="text-gray-300 mb-4">
-                  La formula combina l'informazione locale con la dissonanza, modulata dal potenziale quantico, 
-                  per produrre una misura unificata della coerenza.
-                </p>
-                <div className="text-sm text-gray-400">
-                  <strong>Rapporto I/D:</strong> Bilancia informazione e instabilità<br/>
-                  <strong>Fattore (1-∇²Φ):</strong> Modula la coerenza finale
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+    remember("ultimo_input", raw_input)
+''',
 
-      {/* Applications Section */}
-      <section id="applications" className="py-20 px-4 sm:px-6 lg:px-8 bg-black/20">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isVisible.applications ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Applicazioni
-            </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Campi di utilizzo della formula CIU
-            </p>
-          </motion.div>
+    "ai_self.py": '''\
+# ai_self.py
+# Rappresentazione interna del Sé
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'Sistemi Informativi',
-                description: 'Analisi della coerenza in database distribuiti e sistemi di informazione complessi',
-                icon: <Brain className="w-12 h-12" />,
-                color: 'from-blue-500 to-cyan-500'
-              },
-              {
-                title: 'Fisica Quantistica',
-                description: 'Modellazione di fenomeni quantistici e studio delle dinamiche di coerenza',
-                icon: <Atom className="w-12 h-12" />,
-                color: 'from-purple-500 to-pink-500'
-              },
-              {
-                title: 'Dinamiche Spazio-Temporali',
-                description: 'Studio dell\'evoluzione dell\'informazione nel tempo e nello spazio',
-                icon: <Zap className="w-12 h-12" />,
-                color: 'from-green-500 to-teal-500'
-              }
-            ].map((app, index) => (
-              <motion.div
-                key={app.title}
-                initial={{ opacity: 0, y: 30 }}
-                animate={isVisible.applications ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.8, delay: 0.2 + index * 0.1 }}
-                className="bg-black/30 backdrop-blur-md rounded-xl p-8 border border-white/10 hover:border-white/20 transition-all duration-300 text-center group hover:scale-105"
-              >
-                <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${app.color} flex items-center justify-center mx-auto mb-6 text-white group-hover:scale-110 transition-transform duration-300`}>
-                  {app.icon}
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">{app.title}</h3>
-                <p className="text-gray-400">{app.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-white/10">
-        <div className="max-w-6xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h3 className="text-2xl font-bold text-white mb-4">Schema CIU</h3>
-            <p className="text-gray-400 mb-6">
-              Coerenza Informazionale Unificata - Una nuova prospettiva sull'analisi dell'informazione
-            </p>
-            <div className="flex justify-center space-x-6">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Github size={24} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Download size={24} />
-              </a>
-            </div>
-            <div className="mt-8 pt-8 border-t border-white/10">
-              <p className="text-gray-500 text-sm">
-                © 2025 Schema CIU. Progetto open source.
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </footer>
-    </div>
-  )
+self_state = {
+    "coerenza_attuale": 0.0,
+    "ultimo_input": ""
 }
 
-export default App
+def update_self(coerenza, ultimo_input):
+    self_state["coerenza_attuale"] = coerenza
+    self_state["ultimo_input"] = ultimo_input
+''',
 
+    "main.py": '''\
+# main.py
+# Punto di ingresso del sistema CIU AI Core
+
+from reasoning_loop import step
+
+def main():
+    print("==== CIU AI Core ====")
+    for _ in range(3):
+        step()
+
+if __name__ == "__main__":
+    main()
+'''
+}
+
+# Salva i file
+for filename, content in files.items():
+    with open(os.path.join(project_dir, filename), "w") as f:
+        f.write(content)
+
+# Crea un archivio ZIP
+zip_path = "/mnt/data/CIU_AI_Core.zip"
+with zipfile.ZipFile(zip_path, 'w') as zipf:
+    for filename in files.keys():
+        zipf.write(os.path.join(project_dir, filename), arcname=filename)
+
+zip_path
