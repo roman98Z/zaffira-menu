@@ -1,121 +1,1165 @@
-# Ri-esecuzione del codice dopo il reset dell'ambiente per ricreare i file e lo zip
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gin Bar - Aperitivo e Mixology</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.3rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .category-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+        }
+        
+        .category-image {
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .category-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .category-card:hover .category-image img {
+            transform: scale(1.1);
+        }
+        
+        .category-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .category-card:hover .category-image::after {
+            opacity: 1;
+        }
+        
+        .category-content {
+            padding: 2rem;
+        }
+        
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .category-description {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+        
+        .explore-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .explore-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .page-content {
+            display: none;
+        }
+        
+        .page-content.active {
+            display: block;
+        }
+        
+        .category-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .product-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .product-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-description {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+        }
+        
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .product-detail {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-detail.active {
+            display: block;
+        }
+        
+        .product-image {
+            width: 200px;
+            height: 300px;
+            border-radius: 15px;
+            margin: 0 auto 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .gelato-image {
+            width: 150px;
+            height: 200px;
+            border-radius: 15px;
+            margin: 0 auto 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+        }
+        
+        .product-detail h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .product-detail .product-price {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .product-specs {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .spec-label {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .spec-value {
+            color: #666;
+        }
+        
+        .footer {
+            background: rgba(51, 51, 51, 0.95);
+            backdrop-filter: blur(20px);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            border-radius: 20px;
+            margin-top: 3rem;
+        }
+        
+        .footer h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: white;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .instagram {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        }
+        
+        .phone {
+            background: linear-gradient(45deg, #00c851 0%, #007e33 100%);
+        }
+        
+        .social-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .copyright {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .social-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .back-button {
+                top: 1rem;
+                left: 1rem;
+                padding: 0.8rem 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="goBack()">← Indietro</button>
+    
+    <div class="container">
+        <!-- Homepage -->
+        <div id="homepage" class="page-content active">
+            <div class="header">
+                <h1>Gin Bar</h1>
+                <p>Scopri le nostre proposte per un aperitivo indimenticabile</p>
+            </div>
+            
+            <div class="categories-grid">
+                <div class="category-card" onclick="showCategory('apericena')">
+                    <div class="category-image">
+                        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Apericena" loading="lazy">
+                    </div>
+                    <div class="category-content">
+                        <h3 class="category-title">🍽️ Apericena</h3>
+                        <p class="category-description">Bruschette, taglieri e stuzzichini per condividere momenti speciali</p>
+                        <button class="explore-button">Esplora il Menu</button>
+                    </div>
+                </div>
+                
+                <div class="category-card" onclick="showCategory('bevande')">
+                    <div class="category-image">
+                        <img src="https://images.unsplash.com/photo-1551538827-9c037cb4f32a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Bevande" loading="lazy">
+                    </div>
+                    <div class="category-content">
+                        <h3 class="category-title">🥤 Bevande</h3>
+                        <p class="category-description">Acque, bibite e succhi per accompagnare il tuo aperitivo</p>
+                        <button class="explore-button">Esplora il Menu</button>
+                    </div>
+                </div>
+                
+                <div class="category-card" onclick="showCategory('vini')">
+                    <div class="category-image">
+                        <img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Vini e Bollicine" loading="lazy">
+                    </div>
+                    <div class="category-content">
+                        <h3 class="category-title">🍷 Vini e Bollicine</h3>
+                        <p class="category-description">Selezione di vini pregiati e bollicine per ogni occasione</p>
+                        <button class="explore-button">Esplora il Menu</button>
+                    </div>
+                </div>
+                
+                <div class="category-card" onclick="showCategory('mixology')">
+                    <div class="category-image">
+                        <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Mixology" loading="lazy">
+                    </div>
+                    <div class="category-content">
+                        <h3 class="category-title">🍸 Mixology</h3>
+                        <p class="category-description">Cocktail creativi e drink signature preparati dai nostri bartender</p>
+                        <button class="explore-button">Esplora il Menu</button>
+                    </div>
+                </div>
+                
+                <div class="category-card" onclick="showCategory('gin')">
+                    <div class="category-image">
+                        <img src="https://images.unsplash.com/photo-1569529465841-dfecdab7503b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="I Nostri Gin" loading="lazy">
+                    </div>
+                    <div class="category-content">
+                        <h3 class="category-title">🍾 I Nostri Gin</h3>
+                        <p class="category-description">Collezione esclusiva di gin premium e artigianali</p>
+                        <button class="explore-button">Esplora il Menu</button>
+                    </div>
+                </div>
+                
+                <div class="category-card" onclick="showCategory('gelati')">
+                    <div class="category-image">
+                        <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Gelati" loading="lazy">
+                    </div>
+                    <div class="category-content">
+                        <h3 class="category-title">🍦 Gelati</h3>
+                        <p class="category-description">Selezione di gelati artigianali e specialità dolci</p>
+                        <button class="explore-button">Esplora il Menu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-import os
-import zipfile
+        <!-- Apericena Page -->
+        <div id="apericena" class="page-content">
+            <div class="category-header">
+                <h2>🍽️ Apericena</h2>
+                <p>Bruschette, taglieri e stuzzichini per condividere momenti speciali</p>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-name">Bruschette Miste</div>
+                    <div class="product-description">Pane casereccio con pomodoro, olive e paté</div>
+                    <div class="product-price">€6,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Tagliere Classico Grande</div>
+                    <div class="product-description">Prosciutto crudo, Mortadella, Capocollo, Salame, Salsiccia Secca, Bruschette, Pecorino, Formaggio Stagionato, Mozzarella</div>
+                    <div class="product-price">€16,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Tagliere Classico Piccolo</div>
+                    <div class="product-description">Prosciutto crudo, Salame, Salsiccia Secca, Bruschette, Pecorino, Formaggio Stagionato</div>
+                    <div class="product-price">€12,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Tagliere Vegetariano</div>
+                    <div class="product-description">Bruschette, Pecorino, Formaggio Stagionato, Mozzarella, Olive, Pomodorini</div>
+                    <div class="product-price">€10,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Olive Ascolane (6 pz)</div>
+                    <div class="product-description">Olive ripiene fritte, specialità marchigiana</div>
+                    <div class="product-price">€5,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Patatine Fritte</div>
+                    <div class="product-description">Patatine fresche tagliate a mano</div>
+                    <div class="product-price">€4,00</div>
+                </div>
+            </div>
+        </div>
 
-project_dir = "/mnt/data/CIU_AI_Core"
-os.makedirs(project_dir, exist_ok=True)
+        <!-- Bevande Page -->
+        <div id="bevande" class="page-content">
+            <div class="category-header">
+                <h2>🥤 Bevande</h2>
+                <p>Acque, bibite e succhi per accompagnare il tuo aperitivo</p>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-name">Acqua Naturale 50cl</div>
+                    <div class="product-description">Acqua minerale naturale</div>
+                    <div class="product-price">€1,50</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Acqua Frizzante 50cl</div>
+                    <div class="product-description">Acqua minerale frizzante</div>
+                    <div class="product-price">€1,50</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Coca Cola</div>
+                    <div class="product-description">Lattina 33cl</div>
+                    <div class="product-price">€2,50</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Coca Cola Zero</div>
+                    <div class="product-description">Lattina 33cl</div>
+                    <div class="product-price">€2,50</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Fanta</div>
+                    <div class="product-description">Lattina 33cl</div>
+                    <div class="product-price">€2,50</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Sprite</div>
+                    <div class="product-description">Lattina 33cl</div>
+                    <div class="product-price">€2,50</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Tè Freddo Pesca</div>
+                    <div class="product-description">Bottiglia 50cl</div>
+                    <div class="product-price">€2,50</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Tè Freddo Limone</div>
+                    <div class="product-description">Bottiglia 50cl</div>
+                    <div class="product-price">€2,50</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Succo ACE</div>
+                    <div class="product-description">Bottiglia 20cl</div>
+                    <div class="product-price">€2,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Succo Pesca</div>
+                    <div class="product-description">Bottiglia 20cl</div>
+                    <div class="product-price">€2,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Succo Pera</div>
+                    <div class="product-description">Bottiglia 20cl</div>
+                    <div class="product-price">€2,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Succo Ananas</div>
+                    <div class="product-description">Bottiglia 20cl</div>
+                    <div class="product-price">€2,00</div>
+                </div>
+            </div>
+        </div>
 
-files = {
-    "ciu_engine.py": '''\
-# ciu_engine.py
-# Motore per il calcolo della Coerenza Informazionale Universale (CIU)
+        <!-- Vini Page -->
+        <div id="vini" class="page-content">
+            <div class="category-header">
+                <h2>🍷 Vini e Bollicine</h2>
+                <p>Selezione di vini pregiati e bollicine per ogni occasione</p>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-name">Prosecco di Valdobbiadene DOCG</div>
+                    <div class="product-description">Bollicine eleganti e raffinate</div>
+                    <div class="product-price">€18,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Franciacorta DOCG</div>
+                    <div class="product-description">Metodo classico, bollicine premium</div>
+                    <div class="product-price">€25,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Vermentino di Sardegna DOC</div>
+                    <div class="product-description">Bianco fresco e minerale</div>
+                    <div class="product-price">€15,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Falanghina del Sannio DOC</div>
+                    <div class="product-description">Bianco aromatico campano</div>
+                    <div class="product-price">€14,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Chianti Classico DOCG</div>
+                    <div class="product-description">Rosso toscano tradizionale</div>
+                    <div class="product-price">€16,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Primitivo di Manduria DOC</div>
+                    <div class="product-description">Rosso pugliese intenso</div>
+                    <div class="product-price">€15,00</div>
+                </div>
+            </div>
+        </div>
 
-def compute_ciu(I, D, phi_laplacian):
-    """
-    Calcola la coerenza informazionale C(x,t)
-    I: informazione locale
-    D: dissonanza spazio-temporale
-    phi_laplacian: laplaciano del potenziale quantico
-    """
-    try:
-        return (I / D) * (1 - phi_laplacian)
-    except ZeroDivisionError:
-        return float('inf')
-''',
+        <!-- Mixology Page -->
+        <div id="mixology" class="page-content">
+            <div class="category-header">
+                <h2>🍸 Mixology</h2>
+                <p>Cocktail creativi e drink signature preparati dai nostri bartender</p>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-name">Aperol Spritz</div>
+                    <div class="product-description">Aperol, Prosecco, Soda, Arancia</div>
+                    <div class="product-price">€6,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Negroni</div>
+                    <div class="product-description">Gin, Vermouth Rosso, Bitter Campari</div>
+                    <div class="product-price">€8,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Gin Tonic</div>
+                    <div class="product-description">Gin premium, Acqua tonica, Lime</div>
+                    <div class="product-price">€7,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Moscow Mule</div>
+                    <div class="product-description">Vodka, Ginger Beer, Lime, Menta</div>
+                    <div class="product-price">€7,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Mojito</div>
+                    <div class="product-description">Rum Bianco, Menta, Lime, Zucchero, Soda</div>
+                    <div class="product-price">€7,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Old Fashioned</div>
+                    <div class="product-description">Bourbon, Zucchero, Angostura, Arancia</div>
+                    <div class="product-price">€9,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Cosmopolitan</div>
+                    <div class="product-description">Vodka, Triple Sec, Succo Cranberry, Lime</div>
+                    <div class="product-price">€8,00</div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">Gin Bar Signature</div>
+                    <div class="product-description">Cocktail della casa con gin artigianale</div>
+                    <div class="product-price">€10,00</div>
+                </div>
+            </div>
+        </div>
 
-    "memory.py": '''\
-# memory.py
-# Simulazione di memoria coerente (database semplice in RAM)
+        <!-- Gin Page -->
+        <div id="gin" class="page-content">
+            <div class="category-header">
+                <h2>🍾 I Nostri Gin</h2>
+                <p>Collezione esclusiva di gin premium e artigianali</p>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card" onclick="showProduct('hendricks')">
+                    <div class="product-name">Hendrick's Gin</div>
+                    <div class="product-description">Gin scozzese con cetriolo e rosa</div>
+                    <div class="product-price">€8,00</div>
+                </div>
+                
+                <div class="product-card" onclick="showProduct('bombay')">
+                    <div class="product-name">Bombay Sapphire</div>
+                    <div class="product-description">London Dry Gin con 10 botaniche</div>
+                    <div class="product-price">€7,00</div>
+                </div>
+                
+                <div class="product-card" onclick="showProduct('tanqueray')">
+                    <div class="product-name">Tanqueray</div>
+                    <div class="product-description">London Dry Gin classico</div>
+                    <div class="product-price">€6,00</div>
+                </div>
+                
+                <div class="product-card" onclick="showProduct('monkey47')">
+                    <div class="product-name">Monkey 47</div>
+                    <div class="product-description">Gin tedesco con 47 botaniche</div>
+                    <div class="product-price">€12,00</div>
+                </div>
+                
+                <div class="product-card" onclick="showProduct('botanist')">
+                    <div class="product-name">The Botanist</div>
+                    <div class="product-description">Gin scozzese di Islay con 22 botaniche</div>
+                    <div class="product-price">€10,00</div>
+                </div>
+                
+                <div class="product-card" onclick="showProduct('malfy')">
+                    <div class="product-name">Malfy Gin</div>
+                    <div class="product-description">Gin italiano con limoni della Costiera</div>
+                    <div class="product-price">€8,00</div>
+                </div>
+            </div>
+        </div>
 
-memory_store = {}
+        <!-- Gelati Page -->
+        <div id="gelati" class="page-content">
+            <div class="category-header">
+                <h2>🍦 Gelati</h2>
+                <p>Selezione di gelati artigianali e specialità dolci</p>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card" onclick="showProduct('cucciolone')">
+                    <div class="gelato-image">🍦</div>
+                    <div class="product-name">Cucciolone</div>
+                    <div class="product-description">Gelato artigianale cremoso e goloso</div>
+                    <div class="product-price">€3,50</div>
+                </div>
+                
+                <div class="product-card" onclick="showProduct('whitechocolate')">
+                    <div class="gelato-image">🤍</div>
+                    <div class="product-name">White Chocolate</div>
+                    <div class="product-description">Gelato al cioccolato bianco premium</div>
+                    <div class="product-price">€4,00</div>
+                </div>
+                
+                <div class="product-card" onclick="showProduct('cordarica')">
+                    <div class="gelato-image">🍫</div>
+                    <div class="product-name">Corda Rica</div>
+                    <div class="product-description">Gelato ricco e intenso</div>
+                    <div class="product-price">€3,80</div>
+                </div>
+                
+                <div class="product-card" onclick="showProduct('magnum')">
+                    <div class="gelato-image">🍦</div>
+                    <div class="product-name">Magnum®</div>
+                    <div class="product-description">Il classico gelato con cioccolato</div>
+                    <div class="product-price">€4,50</div>
+                </div>
+                
+                <div class="product-card" onclick="showProduct('bomboniera')">
+                    <div class="gelato-image">🎁</div>
+                    <div class="product-name">Bomboniera Classic</div>
+                    <div class="product-description">Gelato elegante e raffinato</div>
+                    <div class="product-price">€4,20</div>
+                </div>
+            </div>
+        </div>
 
-def remember(key, info):
-    memory_store[key] = info
+        <!-- Product Details -->
+        <div id="hendricks" class="product-detail">
+            <div class="product-image">🍾</div>
+            <h3>Hendrick's Gin</h3>
+            <div class="product-price">€8,00</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Origine:</span>
+                    <span class="spec-value">Scozia</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Gradazione:</span>
+                    <span class="spec-value">41.4% Vol</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Botaniche:</span>
+                    <span class="spec-value">Ginepro, Coriandolo, Cetriolo, Rosa</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Note:</span>
+                    <span class="spec-value">Fresco, floreale, distintivo</span>
+                </div>
+            </div>
+            <p>Hendrick's è un gin scozzese unico, distillato con cetriolo e petali di rosa che gli conferiscono un carattere distintivo e rinfrescante. Perfetto per un gin tonic elegante.</p>
+        </div>
 
-def recall(key):
-    return memory_store.get(key, None)
-''',
+        <div id="bombay" class="product-detail">
+            <div class="product-image">🍾</div>
+            <h3>Bombay Sapphire</h3>
+            <div class="product-price">€7,00</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Origine:</span>
+                    <span class="spec-value">Inghilterra</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Gradazione:</span>
+                    <span class="spec-value">40% Vol</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Botaniche:</span>
+                    <span class="spec-value">10 botaniche selezionate</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Note:</span>
+                    <span class="spec-value">Equilibrato, aromatico, versatile</span>
+                </div>
+            </div>
+            <p>London Dry Gin premium con 10 botaniche accuratamente selezionate. Il suo sapore equilibrato lo rende perfetto per ogni cocktail classico.</p>
+        </div>
 
-    "nlp_module.py": '''\
-# nlp_module.py
-# Modulo base di NLP per interpretare testo e estrarre informazione
+        <div id="tanqueray" class="product-detail">
+            <div class="product-image">🍾</div>
+            <h3>Tanqueray</h3>
+            <div class="product-price">€6,00</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Origine:</span>
+                    <span class="spec-value">Inghilterra</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Gradazione:</span>
+                    <span class="spec-value">43.1% Vol</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Botaniche:</span>
+                    <span class="spec-value">Ginepro, Coriandolo, Angelica, Liquirizia</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Note:</span>
+                    <span class="spec-value">Secco, intenso, classico</span>
+                </div>
+            </div>
+            <p>Il London Dry Gin per eccellenza, con una ricetta immutata dal 1830. Carattere deciso e sapore pulito, ideale per i puristi del gin.</p>
+        </div>
 
-def extract_information(text):
-    # Placeholder: Estrai un valore tra 0 e 1 per simulare "informazione locale"
-    return min(1.0, max(0.0, len(set(text)) / 100))
-''',
+        <div id="monkey47" class="product-detail">
+            <div class="product-image">🍾</div>
+            <h3>Monkey 47</h3>
+            <div class="product-price">€12,00</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Origine:</span>
+                    <span class="spec-value">Germania</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Gradazione:</span>
+                    <span class="spec-value">47% Vol</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Botaniche:</span>
+                    <span class="spec-value">47 botaniche diverse</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Note:</span>
+                    <span class="spec-value">Complesso, aromatico, unico</span>
+                </div>
+            </div>
+            <p>Gin tedesco straordinario con 47 botaniche che creano un profilo aromatico incredibilmente complesso. Un'esperienza sensoriale unica per gli intenditori.</p>
+        </div>
 
-    "sensor_interface.py": '''\
-# sensor_interface.py
-# Simulatore di input sensoriale (es. visione, testo, suono)
+        <div id="botanist" class="product-detail">
+            <div class="product-image">🍾</div>
+            <h3>The Botanist</h3>
+            <div class="product-price">€10,00</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Origine:</span>
+                    <span class="spec-value">Scozia (Islay)</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Gradazione:</span>
+                    <span class="spec-value">46% Vol</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Botaniche:</span>
+                    <span class="spec-value">22 botaniche di Islay</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Note:</span>
+                    <span class="spec-value">Erbaceo, marino, selvaggio</span>
+                </div>
+            </div>
+            <p>Gin scozzese dell'isola di Islay, prodotto con botaniche locali raccolte a mano. Il carattere selvaggio dell'isola in ogni sorso.</p>
+        </div>
 
-def get_input():
-    # Simula un input testuale
-    return "osservo un cambiamento nel campo quantico locale"
-''',
+        <div id="malfy" class="product-detail">
+            <div class="product-image">🍾</div>
+            <h3>Malfy Gin</h3>
+            <div class="product-price">€8,00</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Origine:</span>
+                    <span class="spec-value">Italia</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Gradazione:</span>
+                    <span class="spec-value">41% Vol</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Botaniche:</span>
+                    <span class="spec-value">Ginepro, Limoni della Costiera</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Note:</span>
+                    <span class="spec-value">Agrumato, mediterraneo, fresco</span>
+                </div>
+            </div>
+            <p>Gin italiano che cattura l'essenza del Mediterraneo con limoni della Costiera Amalfitana. Fresco e solare come l'estate italiana.</p>
+        </div>
 
-    "reasoning_loop.py": '''\
-# reasoning_loop.py
-# Loop di ragionamento coerente
+        <!-- Gelati Product Details -->
+        <div id="cucciolone" class="product-detail">
+            <div class="gelato-image">🍦</div>
+            <h3>Cucciolone</h3>
+            <div class="product-price">€3,50</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Tipo:</span>
+                    <span class="spec-value">Gelato artigianale</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Formato:</span>
+                    <span class="spec-value">Cono/Coppetta</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Caratteristiche:</span>
+                    <span class="spec-value">Cremoso e goloso</span>
+                </div>
+            </div>
+            <p>Il Cucciolone è un gelato artigianale dalla consistenza cremosa e dal sapore intenso. Perfetto per chi cerca un momento di dolcezza autentica.</p>
+        </div>
 
-from ciu_engine import compute_ciu
-from sensor_interface import get_input
-from nlp_module import extract_information
-from memory import remember, recall
+        <div id="whitechocolate" class="product-detail">
+            <div class="gelato-image">🤍</div>
+            <h3>White Chocolate</h3>
+            <div class="product-price">€4,00</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Tipo:</span>
+                    <span class="spec-value">Gelato al cioccolato bianco</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Formato:</span>
+                    <span class="spec-value">Premium</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Caratteristiche:</span>
+                    <span class="spec-value">Delicato e raffinato</span>
+                </div>
+            </div>
+            <p>Gelato premium al cioccolato bianco di alta qualità. Il sapore delicato e la consistenza vellutata lo rendono una scelta elegante per i palati raffinati.</p>
+        </div>
 
-def step():
-    raw_input = get_input()
-    I = extract_information(raw_input)
-    D = 0.3  # fissa per esempio
-    phi_laplacian = 0.3
+        <div id="cordarica" class="product-detail">
+            <div class="gelato-image">🍫</div>
+            <h3>Corda Rica</h3>
+            <div class="product-price">€3,80</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Tipo:</span>
+                    <span class="spec-value">Gelato ricco</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Formato:</span>
+                    <span class="spec-value">Specialità</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Caratteristiche:</span>
+                    <span class="spec-value">Intenso e corposo</span>
+                </div>
+            </div>
+            <p>Corda Rica è un gelato dal sapore intenso e dalla consistenza ricca. Una specialità che soddisfa chi cerca un'esperienza gustativa piena e appagante.</p>
+        </div>
 
-    C = compute_ciu(I, D, phi_laplacian)
-    print(f"Input: {raw_input}")
-    print(f"Coerenza calcolata: {C:.3f}")
+        <div id="magnum" class="product-detail">
+            <div class="gelato-image">🍦</div>
+            <h3>Magnum®</h3>
+            <div class="product-price">€4,50</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Tipo:</span>
+                    <span class="spec-value">Gelato con cioccolato</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Formato:</span>
+                    <span class="spec-value">Stecco premium</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Caratteristiche:</span>
+                    <span class="spec-value">Classico e iconico</span>
+                </div>
+            </div>
+            <p>Il classico Magnum® con la sua inconfondibile copertura di cioccolato e il gelato cremoso all'interno. Un'icona del piacere che non passa mai di moda.</p>
+        </div>
 
-    remember("ultimo_input", raw_input)
-''',
+        <div id="bomboniera" class="product-detail">
+            <div class="gelato-image">🎁</div>
+            <h3>Bomboniera Classic</h3>
+            <div class="product-price">€4,20</div>
+            <div class="product-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Tipo:</span>
+                    <span class="spec-value">Gelato elegante</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Formato:</span>
+                    <span class="spec-value">Classic</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Caratteristiche:</span>
+                    <span class="spec-value">Raffinato e prezioso</span>
+                </div>
+            </div>
+            <p>Bomboniera Classic è un gelato elegante e raffinato, perfetto per chi cerca una dolcezza preziosa. Come un piccolo regalo per il palato.</p>
+        </div>
 
-    "ai_self.py": '''\
-# ai_self.py
-# Rappresentazione interna del Sé
+        <!-- Footer -->
+        <div class="footer">
+            <h3>Gin Bar</h3>
+            <p>Aperitivo e Mixology</p>
+            
+            <div class="social-links">
+                <a href="https://instagram.com/people_terni" class="social-link instagram">
+                    📷 @people_terni
+                </a>
+                <a href="tel:+390744198343" class="social-link phone">
+                    📞 0744 1983433
+                </a>
+            </div>
+            
+            <div class="copyright">
+                © 2024 Gin Bar - Aperitivo e Mixology. Tutti i diritti riservati.
+            </div>
+        </div>
+    </div>
 
-self_state = {
-    "coerenza_attuale": 0.0,
-    "ultimo_input": ""
-}
+    <script>
+        let currentPage = 'homepage';
+        let pageHistory = [];
 
-def update_self(coerenza, ultimo_input):
-    self_state["coerenza_attuale"] = coerenza
-    self_state["ultimo_input"] = ultimo_input
-''',
+        function showCategory(category) {
+            pageHistory.push(currentPage);
+            currentPage = category;
+            
+            // Nascondi tutte le pagine
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Mostra la categoria selezionata
+            document.getElementById(category).classList.add('active');
+            
+            // Mostra il pulsante indietro
+            document.querySelector('.back-button').style.display = 'block';
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
 
-    "main.py": '''\
-# main.py
-# Punto di ingresso del sistema CIU AI Core
+        function showProduct(product) {
+            pageHistory.push(currentPage);
+            currentPage = product;
+            
+            // Nascondi tutte le pagine
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Nascondi tutti i dettagli prodotto
+            document.querySelectorAll('.product-detail').forEach(detail => {
+                detail.classList.remove('active');
+            });
+            
+            // Mostra il prodotto selezionato
+            document.getElementById(product).classList.add('active');
+            
+            // Mostra il pulsante indietro
+            document.querySelector('.back-button').style.display = 'block';
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
 
-from reasoning_loop import step
+        function goBack() {
+            if (pageHistory.length > 0) {
+                const previousPage = pageHistory.pop();
+                currentPage = previousPage;
+                
+                // Nascondi tutte le pagine e dettagli
+                document.querySelectorAll('.page-content').forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.querySelectorAll('.product-detail').forEach(detail => {
+                    detail.classList.remove('active');
+                });
+                
+                // Mostra la pagina precedente
+                if (previousPage === 'homepage') {
+                    document.getElementById('homepage').classList.add('active');
+                    document.querySelector('.back-button').style.display = 'none';
+                } else {
+                    document.getElementById(previousPage).classList.add('active');
+                }
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            }
+        }
 
-def main():
-    print("==== CIU AI Core ====")
-    for _ in range(3):
-        step()
+        // Gestione del pulsante indietro del browser
+        window.addEventListener('popstate', function(event) {
+            goBack();
+        });
 
-if __name__ == "__main__":
-    main()
-'''
-}
-
-# Salva i file
-for filename, content in files.items():
-    with open(os.path.join(project_dir, filename), "w") as f:
-        f.write(content)
-
-# Crea un archivio ZIP
-zip_path = "/mnt/data/CIU_AI_Core.zip"
-with zipfile.ZipFile(zip_path, 'w') as zipf:
-    for filename in files.keys():
-        zipf.write(os.path.join(project_dir, filename), arcname=filename)
-
-zip_path
+        // Aggiungi stato alla cronologia del browser
+        window.addEventListener('load', function() {
+            history.replaceState({page: 'homepage'}, '', '');
+        });
+    </script>
+</body>
+</html>
